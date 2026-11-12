@@ -10,7 +10,7 @@ public class MazeCanvas extends Canvas {
 		grid = grid_arg;
 	}
 	
-	private void drawCell(Graphics g, Cell c, int left, int top, int cell_dim) {
+	private void drawCell(Graphics g, Cell c, int top, int left, int cell_dim) {
 		top = top + 1;
 		if(c.top)
 			g.drawLine(left, top, left + cell_dim, top); // draw top line
