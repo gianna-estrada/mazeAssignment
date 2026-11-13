@@ -1,6 +1,7 @@
 package mazeAssignment;
 
 import javax.swing.*;
+import queue.*;
 import stack.*;
 import java.util.ArrayList;
 import java.util.Random;
@@ -20,6 +21,7 @@ public class MazeFrame extends JFrame {
 		grid[0][0].left = false; // entry point
 		grid[M - 1][N - 1].right = false; // exit point
 		generateMazeRandomisedDFS();
+		mazeSolverBFS();
 		add(new MazeCanvas(grid));
 	}
 	
@@ -86,14 +88,93 @@ public class MazeFrame extends JFrame {
 				
 				next.visited = true;
 				stack.push(next);
-				adj.clear();
 			}
 			
-			// Curr has no neighbours to visit, so it has to backtrack
+			// Current has no neighbours to visit, so it has to backtrack
 			else {
 				stack.pop();
 			}
 		}
+		
+		// Once the maze is generated, reset each cell's
+		// visited status for the maze solver
+		for(int i = 0; i < grid.length; i++) {
+			for(int j = 0; j < grid[0].length; j++) {
+				grid[i][j].visited = false;
+			}
+		}
+	}
+	
+	private void mazeSolverBFS() {
+		int entryRow = 0; // row entrance to maze
+		int entryCol = 0; // column entrance to maze
+		
+		QueueArrayBased queue = new QueueArrayBased();
+		Cell curr = grid[entryRow][entryCol];
+		
+		curr.visited = true;
+		queue.enqueue(curr);
+		
+		while(!queue.isEmpty()) {
+			curr = (Cell) queue.dequeue();
+			
+			// Stop once the exit point is reached
+			if(curr == grid[M - 1][N - 1]) {
+				break;
+			}
+			
+			// Check cell above current
+			if(!curr.top && curr.row > 0) {
+				Cell next = grid[curr.row - 1][curr.col];
+				
+				if(!next.visited) {
+					next.visited = true;
+					next.prev = curr;
+					queue.enqueue(next);
+				}
+			}
+			
+			// Check cell to current's right
+			if(!curr.right && curr.col < (N - 1)) {
+				Cell next = grid[curr.row][curr.col + 1];
+				
+				if(!next.visited) {
+					next.visited = true;
+					next.prev = curr;
+					queue.enqueue(next);
+				}
+			}
+			
+			// Check cell below current
+			if(!curr.bottom && curr.row < (M - 1)) {
+				Cell next = grid[curr.row + 1][curr.col];
+				
+				if(!next.visited) {
+					next.visited = true;
+					next.prev = curr;
+					queue.enqueue(next);
+				}
+			}
+			
+			// Check cell to current's left
+			if(!curr.left && curr.col > 0) {
+				Cell next = grid[curr.row][curr.col - 1];
+				
+				if(!next.visited) {
+					next.visited = true;
+					next.prev = curr;
+					queue.enqueue(next);
+				}
+			}
+		}
+		
+		// Backtracks from the exit to the entry point
+		// with the aid of the marked previous cells
+		while(curr != null) {
+			curr.shortestPath = true;
+			curr = curr.prev;
+		}
+		
 	}
 	
 	private void initialiseGrid() {
