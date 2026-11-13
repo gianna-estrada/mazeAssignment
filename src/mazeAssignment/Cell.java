@@ -6,7 +6,7 @@ public class Cell {
 	int col;
 	public boolean left, right, top, bottom;
 	public Cell prev;
-	public boolean shortestPath;
+	public boolean shortestPath, explored;
 	
 	public Cell(int r, int c) {
 		visited = false;
@@ -14,6 +14,7 @@ public class Cell {
 		col = c;
 		left = right = top = bottom = true;
 		prev = null;
+		explored = false;
 		shortestPath = false; 
 	}
 }

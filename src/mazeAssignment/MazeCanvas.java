@@ -1,11 +1,14 @@
 package mazeAssignment;
 
+import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 public class MazeCanvas extends Canvas {
 	Color PALE_GREEN = new Color(151, 230, 172);
+	Color LAVENDER = new Color(179, 151, 230);
 	Cell [][] grid;
 	
 	public MazeCanvas(Cell [][] grid_arg) {
@@ -14,6 +17,13 @@ public class MazeCanvas extends Canvas {
 	
 	private void drawCell(Graphics g, Cell c, int top, int left, int cell_dim) {
 		top = top + 1;
+		
+		// Colours in all the cells that have been visited
+		// while searching for the exit
+		if(c.explored) {
+			g.setColor(LAVENDER);
+			g.fillRect(left + 1, top + 1, cell_dim - 1, cell_dim - 1);
+		}
 		
 		// Colours in all the cells part of the shortest path
 		if(c.shortestPath) {
@@ -47,9 +57,15 @@ public class MazeCanvas extends Canvas {
 			cell_dim = h / grid.length;
 		}
 		
+		// Makes the lines of the maze walls thicker
+		super.paint(g);
+	    Graphics2D g2 = (Graphics2D) g;
+	    g2.setStroke(new BasicStroke(3));
+		
+	    // Creates the maze grid
 		for(int i = 0; i < grid.length; i++) {
 			for(int j = 0; j < grid[0].length; j++) {
-				drawCell(g, grid[i][j], i * cell_dim, j * cell_dim, cell_dim);
+				drawCell(g2, grid[i][j], i * cell_dim, j * cell_dim, cell_dim);
 			}
 		}
 	}

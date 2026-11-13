@@ -7,11 +7,12 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class MazeFrame extends JFrame {
-	int M = 10; // number of rows
-	int N = 10; // number of columns
+	int M = 8; // number of rows
+	int N = 8; // number of columns
 	Cell [][] grid = new Cell[M][N];
+	MazeCanvas mazeCanvas = new MazeCanvas(grid); // initialise the canvas to call repaint later
 	
-	Random rand = new Random();
+	Random rand = new Random(); // for randomising the maze
 	
 	public MazeFrame() {
 		setTitle("My Perfect Maze!");
@@ -21,8 +22,11 @@ public class MazeFrame extends JFrame {
 		grid[0][0].left = false; // entry point
 		grid[M - 1][N - 1].right = false; // exit point
 		generateMazeRandomisedDFS();
-		mazeSolverBFS();
-		add(new MazeCanvas(grid));
+		add(mazeCanvas);
+		
+		// Call the maze solver method as a thread
+		Thread solver = new Thread(() -> mazeSolverBFS());
+		solver.start();
 	}
 	
 	private void generateMazeRandomisedDFS() {
@@ -105,6 +109,7 @@ public class MazeFrame extends JFrame {
 		}
 	}
 	
+	
 	private void mazeSolverBFS() {
 		int entryRow = 0; // row entrance to maze
 		int entryCol = 0; // column entrance to maze
@@ -112,6 +117,7 @@ public class MazeFrame extends JFrame {
 		QueueArrayBased queue = new QueueArrayBased();
 		Cell curr = grid[entryRow][entryCol];
 		
+		curr.explored = true;
 		curr.visited = true;
 		queue.enqueue(curr);
 		
@@ -129,8 +135,12 @@ public class MazeFrame extends JFrame {
 				
 				if(!next.visited) {
 					next.visited = true;
+					next.explored = true;
 					next.prev = curr;
 					queue.enqueue(next);
+					
+					mazeCanvas.repaint();
+					pause();
 				}
 			}
 			
@@ -140,8 +150,12 @@ public class MazeFrame extends JFrame {
 				
 				if(!next.visited) {
 					next.visited = true;
+					next.explored = true;
 					next.prev = curr;
 					queue.enqueue(next);
+					
+					mazeCanvas.repaint();
+					pause();
 				}
 			}
 			
@@ -151,8 +165,12 @@ public class MazeFrame extends JFrame {
 				
 				if(!next.visited) {
 					next.visited = true;
+					next.explored = true;
 					next.prev = curr;
 					queue.enqueue(next);
+					
+					mazeCanvas.repaint();
+					pause();
 				}
 			}
 			
@@ -162,8 +180,12 @@ public class MazeFrame extends JFrame {
 				
 				if(!next.visited) {
 					next.visited = true;
+					next.explored = true;
 					next.prev = curr;
 					queue.enqueue(next);
+					
+					mazeCanvas.repaint();
+					pause();
 				}
 			}
 		}
@@ -172,10 +194,22 @@ public class MazeFrame extends JFrame {
 		// with the aid of the marked previous cells
 		while(curr != null) {
 			curr.shortestPath = true;
+			mazeCanvas.repaint();
+			pause();
 			curr = curr.prev;
 		}
 		
 	}
+	
+	private void pause() {
+		try {
+			Thread.sleep(300);
+		}
+		catch(InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	private void initialiseGrid() {
 		for(int i = 0; i < grid.length; i++) {
