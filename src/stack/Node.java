@@ -1,5 +1,8 @@
 package stack;
 
+/**
+ * @author Simon McLoughlin
+ */
 public class Node
 {
   private Object item;

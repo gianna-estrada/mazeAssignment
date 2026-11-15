@@ -1,5 +1,8 @@
 package queue;
 
+/**
+ * @author Simon McLoughlin
+ */
 public interface QueueInterface
 {
 

@@ -6,17 +6,23 @@ import stack.*;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * Generates the maze with randomised DFS, then solves it with BFS.
+ */
 public class MazeFrame extends JFrame {
 	int M = 10; // number of rows
 	int N = 10; // number of columns
-	Cell [][] grid = new Cell[M][N];
-	MazeCanvas mazeCanvas = new MazeCanvas(grid); // initialise the canvas to call repaint later
+	Cell [][] grid = new Cell[M][N]; // maze grid
+	MazeCanvas mazeCanvas = new MazeCanvas(grid); // initialise the maze canvas to call repaint later
 	
 	Random rand = new Random(); // for randomising the maze
 	
+	/**
+	 * Constructor for the frame of the maze.
+	 */
 	public MazeFrame() {
 		setTitle("My Perfect Maze!");
-		setSize(600, 600);
+		setSize(600, 600); // size of the window for the maze GUI
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		initialiseGrid();
 		grid[0][0].left = false; // entry point
@@ -24,11 +30,18 @@ public class MazeFrame extends JFrame {
 		generateMazeRandomisedDFS();
 		add(mazeCanvas);
 		
-		// Call the maze solver method as a thread
+		// Calls the maze solver method as a thread so that the pause method can be called
 		Thread solver = new Thread(() -> mazeSolverBFS());
 		solver.start();
 	}
 	
+	/**
+	 * The generator for the maze, using Depth First Search. <br>
+	 * It removes the wall between the current cell and a random neighbour,
+	 * until all cells within the maze grid have been visited. <br>
+	 * The stack keeps track of all cells that have been visited, so that it
+	 * can easily backtrack once it hits a dead end.
+	 */
 	private void generateMazeRandomisedDFS() {
 		// Use randomised DFS to tear down correct walls to generate a perfect maze
 		int rowStart = 0; 
@@ -63,7 +76,7 @@ public class MazeFrame extends JFrame {
 				adj.add(grid[curr.row][curr.col - 1]);
 			}
 			
-			// Choose a random adjacent cell if there's any
+			// Chooses a random adjacent cell if there's any
 			if(!adj.isEmpty()) {
 				int randomNum = (int)(Math.random() * adj.size());
 				Cell next = adj.get(randomNum);
@@ -109,15 +122,17 @@ public class MazeFrame extends JFrame {
 		}
 	}
 	
-	
+	/**
+	 * The solver for the maze, using Breadth First Search. <br>
+	 * The queue keeps track of the cells that should be checked later.
+	 */
 	private void mazeSolverBFS() {
 		int entryRow = 0; // row entrance to maze
 		int entryCol = 0; // column entrance to maze
 		
 		QueueArrayBased queue = new QueueArrayBased();
-		Cell curr = grid[entryRow][entryCol];
+		Cell curr = grid[entryRow][entryCol]; // maze start point is top-left
 		
-		curr.explored = true;
 		curr.visited = true;
 		queue.enqueue(curr);
 		
@@ -169,10 +184,18 @@ public class MazeFrame extends JFrame {
 		
 	}
 	
+	/**
+	 * Checks if the next cell has been visited. If not, the cell will be visited and put into
+	 * the queue to check its neighbours later. <br>
+	 * The maze GUI is updated with this visited cell and then there's a delay before a new
+	 * cell is checked.
+	 * @param next  the next cell
+	 * @param curr  the current cell
+	 * @param queue  the queue to keep track of the next cells' neighbours to visit
+	 */
 	private void visitNextCell(Cell next, Cell curr, QueueArrayBased queue) {
 		if(!next.visited) {
 			next.visited = true;
-			next.explored = true;
 			next.prev = curr;
 			queue.enqueue(next);
 			
@@ -181,6 +204,9 @@ public class MazeFrame extends JFrame {
 		}
 	}
 	
+	/**
+	 * Pauses the thread for a specified amount of milliseconds.
+	 */
 	private void pause() {
 		try {
 			Thread.sleep(300);
@@ -190,7 +216,9 @@ public class MazeFrame extends JFrame {
 		}
 	}
 	
-	
+	/**
+	 * Creates the grid for the maze.
+	 */
 	private void initialiseGrid() {
 		for(int i = 0; i < grid.length; i++) {
 			for(int j = 0; j < grid[0].length; j++) {
@@ -199,6 +227,10 @@ public class MazeFrame extends JFrame {
 		}
 	}
 	
+	/**
+	 * The main method. Makes the maze GUI visible.
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		new MazeFrame().setVisible(true);
 	}

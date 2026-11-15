@@ -1,5 +1,8 @@
 package stack;
 
+/**
+ * @author Simon McLoughlin
+ */
 public interface StackInterface
 {
   public boolean isEmpty();

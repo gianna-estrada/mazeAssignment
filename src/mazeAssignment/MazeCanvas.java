@@ -6,21 +6,38 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
+/**
+ * Displays the maze as a GUI for the user to see and follow along.
+ */
 public class MazeCanvas extends Canvas {
 	Color PALE_GREEN = new Color(151, 230, 172);
 	Color LAVENDER = new Color(179, 151, 230);
 	Cell [][] grid;
 	
+	/**
+	 * Constructor for the maze GUI
+	 * @param grid_arg  maze grid
+	 */
 	public MazeCanvas(Cell [][] grid_arg) {
 		grid = grid_arg;
 	}
 	
+	/**
+	 * Draws the walls of a cell. <br>
+	 * If the cell has been visited, it is coloured lavender. <br>
+	 * If the cell is part of the maze's shortest path, it is coloured pale green.
+	 * @param g  the specified Graphics context
+	 * @param c  cell in the maze
+	 * @param top  addresses the top of the cell's top left corner
+	 * @param left  addresses the left of the cell's top left corner
+	 * @param cell_dim  size of a cell in pixels when drawn in screen
+	 */
 	private void drawCell(Graphics g, Cell c, int top, int left, int cell_dim) {
 		top = top + 1;
 		
 		// Colours in all the cells that have been visited
 		// while searching for the exit
-		if(c.explored) {
+		if(c.visited) {
 			g.setColor(LAVENDER);
 			g.fillRect(left + 1, top + 1, cell_dim - 1, cell_dim - 1);
 		}
@@ -43,12 +60,15 @@ public class MazeCanvas extends Canvas {
 			g.drawLine(left + cell_dim, top, left + cell_dim, top + cell_dim); // draw right line
 	}
 	
+	/**
+	 * Creates the maze in the GUI and displays it
+	 */
 	@Override
 	public void paint(Graphics g) {
 		int w = getWidth();
 		int h = getHeight();
 		
-		int cell_dim; // The size of a cell in pixels when drawn in screen
+		int cell_dim;
 		
 		if(w < h) {
 			cell_dim = w / grid.length;
