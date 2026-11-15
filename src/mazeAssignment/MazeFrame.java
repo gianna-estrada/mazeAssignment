@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class MazeFrame extends JFrame {
-	int M = 8; // number of rows
-	int N = 8; // number of columns
+	int M = 10; // number of rows
+	int N = 10; // number of columns
 	Cell [][] grid = new Cell[M][N];
 	MazeCanvas mazeCanvas = new MazeCanvas(grid); // initialise the canvas to call repaint later
 	
@@ -133,60 +133,28 @@ public class MazeFrame extends JFrame {
 			if(!curr.top && curr.row > 0) {
 				Cell next = grid[curr.row - 1][curr.col];
 				
-				if(!next.visited) {
-					next.visited = true;
-					next.explored = true;
-					next.prev = curr;
-					queue.enqueue(next);
-					
-					mazeCanvas.repaint();
-					pause();
-				}
+				visitNextCell(next, curr, queue);
 			}
 			
 			// Check cell to current's right
 			if(!curr.right && curr.col < (N - 1)) {
 				Cell next = grid[curr.row][curr.col + 1];
 				
-				if(!next.visited) {
-					next.visited = true;
-					next.explored = true;
-					next.prev = curr;
-					queue.enqueue(next);
-					
-					mazeCanvas.repaint();
-					pause();
-				}
+				visitNextCell(next, curr, queue);
 			}
 			
 			// Check cell below current
 			if(!curr.bottom && curr.row < (M - 1)) {
 				Cell next = grid[curr.row + 1][curr.col];
 				
-				if(!next.visited) {
-					next.visited = true;
-					next.explored = true;
-					next.prev = curr;
-					queue.enqueue(next);
-					
-					mazeCanvas.repaint();
-					pause();
-				}
+				visitNextCell(next, curr, queue);
 			}
 			
 			// Check cell to current's left
 			if(!curr.left && curr.col > 0) {
 				Cell next = grid[curr.row][curr.col - 1];
 				
-				if(!next.visited) {
-					next.visited = true;
-					next.explored = true;
-					next.prev = curr;
-					queue.enqueue(next);
-					
-					mazeCanvas.repaint();
-					pause();
-				}
+				visitNextCell(next, curr, queue);
 			}
 		}
 		
@@ -199,6 +167,18 @@ public class MazeFrame extends JFrame {
 			curr = curr.prev;
 		}
 		
+	}
+	
+	private void visitNextCell(Cell next, Cell curr, QueueArrayBased queue) {
+		if(!next.visited) {
+			next.visited = true;
+			next.explored = true;
+			next.prev = curr;
+			queue.enqueue(next);
+			
+			mazeCanvas.repaint();
+			pause();
+		}
 	}
 	
 	private void pause() {
